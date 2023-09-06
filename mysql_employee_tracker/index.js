@@ -97,8 +97,4 @@ connection.connect(err =>
                 }
             });
     }
-function allDepartments()
-{
-    
-}
 
