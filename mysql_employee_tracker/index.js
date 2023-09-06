@@ -93,7 +93,8 @@ connection.connect(err =>
                         break;
                     case prompt_message.exit:
                         exit();
-                        break;                        
+                        break;
+                                           
                 }
             });
     }
