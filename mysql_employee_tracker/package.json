@@ -1,0 +1,15 @@
+{
+  "name": "mysql_employee_tracker",
+  "version": "1.0.0",
+  "description": "Developers are asked to create interfaces that meke it easier for none developers to be able to read using a terminal interface",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "inquirer": "^8.2.4",
+    "mysql2": "^3.6.0"
+  }
+}
