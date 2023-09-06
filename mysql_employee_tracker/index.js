@@ -98,5 +98,4 @@ connection.connect(err =>
             });
     }
 
-    function 
 
