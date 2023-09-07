@@ -1,11 +1,11 @@
 // load the requirements
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
-const express = require("express");
-const database = require("./database/connection");
-const cTable = require("console.table");
+const express = require('express');
+const database = require("./Assets/connection");
 
-const PORT = process.env.PORT || 3000;
+
+const PORT = process.env.PORT || 3306;
 const app = express();
 
 // Express middleware
@@ -17,166 +17,161 @@ app.use((req, res) => {
   res.status(404).end();
 });
 
-// Start server after DB connection
-db.connect(err => {
-  if (err) throw err;
-  app.listen(PORT, () => {});
+// Starting server after Database connection
+database.connect(function(err) 
+{
+    if (err)
+    {
+        throw err;
+    }
+    console.log("Connected");
+    prompted();
 });
 
 
-// User messages that will appear on the terminal for the user to select
-const UserPromptMessages = 
-{   allDepartments: "View all Departments",
-    allEmployees: "View all Employees",
-    viewRoles: "View all Employee Roles",
-    addDepartments: "Add a Department",
-    addRoles: "Add a Role",
-    addEmployees: "Add an Employee",
-    updateEmployee: "Update an Employee Role",
-    exit: "Exit"
-};
 
-//create a connection with the local host (attributes)
-const connection = mysql.createConnection(
-    {
-        host: "localhost",
-        port: 3306,
-        user: "root",
-        password: "",
-        database: "employee"
 
-    }
-);
-// handle error
-connection.connect(err => 
-    {
-        // if there is a connection error throw this message
-        if(err) 
-        {
-            throw err;
-        }
-        // then loop back again to the prompt function
-        prompt();
-    });
 
     // prompt function to display the user, menu to select from and
     // be directed to the user function
     
-    function prompt()
+    function prompted()
     {
         // the function will prompt the user
         inquirer.prompt
         ({
             // list of functions for the user to select 
-            name: 'action',
+            name: 'menu',
             type: 'list',
-            choices:
-            [
-                prompt_message.allDepartments,
-                prompt_message.allEmployees,
-                prompt_message.viewRoles,
-                prompt_message.addDepartments,
-                prompt_message.addRoles,
-                prompt_message.addEmployees,
-                prompt_message.updateEmployee,
-                prompt_message.updateManager,
-                prompt_message.exit
-            ]
-            
-        })
-        .then (answer => 
+            choices:[
+                "view all Departments",
+                "view all Employees",
+                "view all Roles",
+                "Add a Department",
+                "Add a Role",
+                "Add an Employee",
+                "Update Employee Role",
+                "Quit"               
+            ]         
+            })
+            .then(function(result)
             {
-                console.log("The answer", answer);
+                console.log("Your Choice: " + result.menu);
+            });
+            
+        
                 // conditional switch to iterate all the listed functions and 
                 // pass the function to another functions that was 
                 // selected by the user
-                switch (answer.action)
+                switch (result.menu)
                 {
-                    case prompt_message.allDepartments:
+                    case "view all Departments":
                         allDepartments();
                         break;
-                    case prompt_message.allEmployees:
+                    case "view all Employees":
                         allEmployees();
                         break;
-                    case prompt_message.viewRoles:
+                    case "view all Roles":
                         viewRoles();
                         break;
-                    case prompt_message.addDepartments:
-                        addDepartments();
+                    case "Add a Department":
+                        addDepartment();
                         break;
-                    case prompt_message.addRoles:
-                        addRoles();
+                    case "Add a Role":
+                        addRole();
                         break;
-                    case prompt_message.addEmployees:
-                        addEmployees();
+                    case "Add an Employee":
+                        addEmployee();
                         break;
-                    case prompt_message.updateEmployee:
+                    case "Update Employee Role":
                         updateEmployee();
-                        break;
-                    case prompt_message.updateManager:
-                        updateManager();
-                        break;
-                    case prompt_message.exit:
-                        exit();
-                        break;
-                                           
+                        break;  
+                    default:
+                        quit();                
+                    
                 }
-            });
-    }
-// function for each department chosen by the user
+           
+        
+    };
+    
+   
+// function for viewing all departments chosen by user in the menu
 
 function allDepartments()
 {
-    const choice = `SELECT department.name 
-    FROM employees
-    LEFT JOIN role ON(role.id = employee.role_id)
-    LEFT JOIN department ON (department.id = role.department_id)
-    ORDER BY department.name;`;
-    connection.choice(choice, (err, res) =>
+    const choice = `SELECT * FROM department`; 
+    database.query(choice, (err, result) => 
     {
         if(err)
         {
-            throw err;
+            res.status(500).json({error: err.message});
+            return;
         }
-        console.log("\n VIEW EMPLOYEE BY DEPARTMENT");
-        console.log("\n" +  res);
-        prompt();
-    });
+        console.table(result);
+        prompted();
+    });  
 }
+
+// function for viewing all Roles chosen by the user in the menu
 
 function viewRoles()
 {
-    const choice = `SELECT role.title, employee.id, AS department
+    const choice = `SELECT * FROM role`;
+    database.query(choice, (err, result) =>
+    {
+        if (err)
+        {
+            res.status(500).json({ error: err.message});
+            return;
+        }
+        console.table(result);
+        prompted();
+    });  
+}
+
+
+// function to view all employees chosen by the user in the menu
+
+function allEmployees()
+{
+    const choice = `SELECT employee.id,
+    employee.firstName,
+    employee.lastName,
+    role.title AS jobTitle,
+    department.departmentName,
+    role.salary,
+    CONCAT (manager.firstName, '  ' , managers.lastName)
+    AS manager
     FROM employee
-    LEFT JOIN role ON (role.id = employee.role_id)
-    LEFT JOIN department ON (department.id = role.department_id)
-    ORDER BY role.title;`;
-    connection.choice(choice, (err, res) =>
+    
+    `
+    database.query(choice, (err, result) => 
     {
         if(err)
         {
             throw err;
         }
-        console.log("\n VIEW EMPLOYEE BY ROLE");
-        console.log("\n" + res);
-        prompt();
+        console.table(result);
+        prompted();
     });
-}
+};
 
-function addDepartments()
+
+// function for adding departments as chosen by the user in the menu
+function addDepartment()
 {
     inquirer.prompt([
         {
-            name: "Department_Name";
+            name: "departmentName",
             type: "input",
             message: "Enter the Department to be Added."
         }
     ]).then((answer) => 
     {
-        const choices = `INSERT INTO department (Department_Name)
+        const choice = `INSERT INTO department (departmentName)
         VALUES (?)`;
-        const parameter = [answer.Department_Name];
-        database.choice(choices, parameter, (err, result) =>
+        const parameter = [answer.departmentName];
+        database.query(choice, parameter, (err, result) =>
         {
             if(err)
             {
@@ -185,18 +180,20 @@ function addDepartments()
             console.log("The New Department has been added to the Database");
 
 
-            database.choice(`SELECT * FROM department`, (err, result) =>
+            database.query(`SELECT * FROM department`, (err, result) =>
             {
                 if(err)
                 {
-                    throw err;
+                    res.status(500).json({error: err.message});
+                    return;
                 }
                 console.table(result);
-                prompt();
+                prompted();
             });
         });          
     });
 };
+// function to add an Employee to the database as chosen by the user in the menu
 function updateEmployee()
 {
     inquirer.prompt([
@@ -208,11 +205,11 @@ function updateEmployee()
         {
             name: "roleId",
             type: "number",
-            message: "Enter the new Role to Update Employee"
+            message: "Enter the new role number of the employee to Update Database"
         }        
     ]).then(function (response)
     {
-        database.choice("UPDATE employee SET roleId = ? WHERE firstName = ?",
+        database.query("UPDATE employee SET roleId = ? WHERE firstName = ?",
         [response.roleId, response.firstName], function (err, data)
         {
             if(err)
@@ -220,106 +217,120 @@ function updateEmployee()
                 throw err;
             }
             console.log("The new new role has been added to the database");
-            database.choice(`SELECT * FROM employee`, (err, result) =>
+            database.query(`SELECT * FROM employee`, (err, result) =>
             {
                 if(err)
                 {
-                    throw err;
-                    prompt();
+                    res.status(500).json({error: err.message})
+                    prompted();
                 }
                 console.table(result);
-                prompt();
+                prompted();
             });
-
         });
     });
 };
 
-function addRoles()
+// function to add roles in the database as chosen by the user in the menu
+function addRole()
 {
     inquirer.prompt([
         {
             name: "title",
             type: "input",
-            message: "Enter title to Database."
+            message: "Enter title to add in Database."
 
         },
         {
             name: "salary",
             type: "input",
-            message: "Enter the Salary for the role added."
+            message: "Enter the Salary for the role added in database."
         },
         {
-            name: "department_id",
+            name: "departmentId",
             type: "number",
-            message: "Enter the Department associated with employee added."
+            message: "Enter the Department associated with employee adding to the database."
         }
     ]).then(function (response) 
     {
-        database.choice("INSERT INTO role (title, salary, department_id) VALUES " + 
-        " (?, ?, ?) ", [response.title, response.salary,
-        response.department_id], function (err, data)
+        database.query("INSERT INTO role (title, salary, departmentId) VALUES " + 
+        " (?, ?, ?) ", [response.title, response.salary, response.departmentId], function (err, data)
         {
             if (err)
             {
                 throw err;
             }
             console.log("The Role has been added to the Database");
-            database.choice(`SELECT * FROM role`, (err, result) =>
+            database.query(`SELECT * FROM role`, (err, result) =>
             {
                 if(err)
                 {
-                    throw err;
-                    prompt();
-                }
-            })
-
-        })
-    })
-}
-
-function updateManager()
-{
-    inquirer.prompt([
-        {
-            name: "firstName",
-            type: "input",
-            message: "Enter the new Managers first Name"
-        },
-        {
-            name: "managersId",
-            type: "number",
-            message: "Enter the new Managers id Number"
-        }
-    ]).then(function (response) 
-    {
-        database.choice("UPDATE employee SET managersId = ? WHERE firstName = ?",
-        [response.managersId, response.firstName], function(err, data)
-        {
-            if(err)
-            {
-                throw err;
-            }
-            console.log("The New Manager id has been added to the Database");
-
-            database.choice(`SELECT * FROM employee`, (err, result) => 
-            {
-                if(err)
-                {
-                    throw err;
-                    prompt();
+                    res.status(500).json({error: err.message})
+                    prompted();
                 }
                 console.table(result);
-                prompt();
+                prompted();
             });
         });
     });
 };
 
+// function to add an employee to the database as chosen by the user in the menu
 
-prompt();
+function addEmployee()
+{
+    inquirer.prompt([
+        {
+            name: "firstName",
+            type: "input",
+            message: "Enter first name of Employee"
+        },
+        {
+            name: "lastName",
+            type: "input",
+            message: "Enter last name of employee"
+        },
+        {
+            name: "roleId",
+            type: "number",
+            message: "Enter the Role Id Number"
+        },
+        {
+            name: "managerId",
+            type: "number",
+            message: "Enter the managers Id number"
+        }
+    ]).then (function (response)
+    {
+        database.query("INSERT INTO employee (firstName, lastName, roleId, managerId " +
+        " VALUES (?, ?, ?, ?)", [response.firstName,
+        response.lastName, response.roleId, response.managerId],
+        function (err, data)
+        {
+            if(err)
+            {
+                throw err;
+            }
+            console.log("New employee has been added");
+            database.query(`SELECT * FROM employee`, (err, result) =>
+            {
+                if (err)
+                {
+                    res.status(500).json({error: err.message});
+                    prompted();
+                }
+                console.table(result);
+                prompted();
+            });
+        });
+    });
+};
 
-
+function quit()
+{
+    database.end();
+    process.exit();
+}
 
    
      
