@@ -151,17 +151,8 @@ function viewRoles()
 
 function allEmployees()
 {
-    const choice = `SELECT employee.id,
-    employee.firstName,
-    employee.lastName,
-    role.title AS jobTitle,
-    department.departmentName,
-    role.salary,
-    CONCAT (manager.firstName, '  ' , managers.lastName)
-    AS manager
-    FROM employee
-    
-    `
+    const choice = `SELECT  * FROM employee`;
+   
     database.query(choice, (err, result) => 
     {
         if(err)
@@ -270,8 +261,7 @@ function addRole()
         }
     ]).then(function (response) 
     {
-        database.query("INSERT INTO role (title, salary, departmentId) VALUES " + 
-        " (?, ?, ?) ", [response.title, response.salary, response.departmentId], function (err, data)
+        database.query("INSERT INTO role (title, salary, departmentId) VALUES  (?, ?, ?) ", [response.title, response.salary, response.departmentId], function (err, data)
         {
             if (err)
             {
@@ -319,9 +309,8 @@ function addEmployee()
         }
     ]).then (function (response)
     {
-        database.query("INSERT INTO employee (firstName, lastName, roleId, managerId " +
-        " VALUES (?, ?, ?, ?)", [response.firstName,
-        response.lastName, response.roleId, response.managerId],
+        database.query("INSERT INTO employee (firstName, lastName, roleId, managerId)  VALUES (?, ?, ?, ?)", 
+        [response.firstName,response.lastName, response.roleId, response.managerId],
         function (err, data)
         {
             if(err)
