@@ -28,7 +28,7 @@ Project is created using:
 
 ## USAGE
 Final app should look something like this:
-../Downloads/117609685-4bdaeb80-b115-11eb-8af5-735c097ba573.mov
+<video src="Module%2012%20Employee%20Tracker.mp4" controls title="Title"></video>
 
 
 ## INSTALLATION
