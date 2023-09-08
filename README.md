@@ -27,7 +27,8 @@ Project is created using:
 ![Alt text](module12_employeeTracker.png)
 
 ## USAGE
-Final demonstration of usage![Alt text](<Module 12 Employee Tracker.gif>) 
+Final demonstration of usage
+![Alt text](<Module 12 Employee Tracker.gif>) 
 
 
 
