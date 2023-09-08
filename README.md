@@ -58,4 +58,6 @@ Here are some guidelines for installing the project on your local machine in ord
 
 
 
-## GITHUB REPOSITORY
+## GITHUB REPOSITORY URL
+
+https://github.com/Tocopro/modeule12employeetracker
