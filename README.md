@@ -27,8 +27,8 @@ Project is created using:
 ![Alt text](module12_employeeTracker.png)
 
 ## USAGE
-Final app should look something like this:
-![Video](Module 12 Employee Tracker.mp4)
+Final demonstration of usage![Alt text](<Module 12 Employee Tracker.gif>) 
+
 
 
 
