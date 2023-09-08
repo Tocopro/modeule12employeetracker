@@ -1,4 +1,8 @@
 # EMPLOYEE TRACKER
+![Github license](http://img.shields.io/badge/license-MIT-blue.svg)
+
+## MIT LICENSE
+This project is licensed under MIT
 
 ## TABLE OF CONTENT
 * [Description of the project](#description-of-the-project)
@@ -18,8 +22,13 @@ Project is created using:
 * MySQL database
 * MySQL2
 
+## SCREENSHOT
+
+![Alt text](module12_employeeTracker.png)
+
 ## USAGE
 Final app should look something like this:
+../Downloads/117609685-4bdaeb80-b115-11eb-8af5-735c097ba573.mov
 
 
 ## INSTALLATION
