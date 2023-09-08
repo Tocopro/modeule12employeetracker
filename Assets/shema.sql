@@ -1,0 +1,29 @@
+-- Active: 1694128378601@@127.0.0.1@3306@employeetracker
+DROP DATABASE IF EXISTS employeeTracker;
+CREATE DATABASE employeeTracker;
+USE employeeTracker;
+
+CREATE TABLE department (
+  id INTEGER AUTO_INCREMENT PRIMARY KEY,
+  departmentName VARCHAR(30) NOT NULL,
+  PRIMARY KEY(id)
+);
+
+CREATE TABLE role (
+  id INTEGER AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(30) NOT NULL,
+  salary DECIMAL (10, 2) NOT NULL,
+  departmentId INTEGER NOT NULL,
+  PRIMARY KEY (id)
+
+);
+
+CREATE TABLE employee (
+  id INTEGER AUTO_INCREMENT PRIMARY KEY,
+  firstName VARCHAR(30) NOT NULL,
+  lastName VARCHAR(30) NOT NULL,
+  roleId INTEGER NOT NULL,
+  managerId INTEGER NOT NULL,
+  PRIMARY KEY(id)
+  
+);

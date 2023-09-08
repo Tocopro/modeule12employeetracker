@@ -2,7 +2,24 @@
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
 const express = require('express');
-const database = require("./Assets/connection");
+
+
+
+// Connect to database
+const database = mysql.createConnection(
+    {
+      host: 'localhost',
+      // Your MySQL username and port,
+      port: 3306,
+      user: 'root',
+      // Your MySQL password
+      password: '',
+      database: 'employeeTracker'
+    },
+    console.log('Connected to the employee database.')
+    
+
+);
 
 
 const PORT = process.env.PORT || 3306;
@@ -57,7 +74,7 @@ database.connect(function(err)
             .then(function(result)
             {
                 console.log("Your Choice: " + result.menu);
-            });
+           
             
         
                 // conditional switch to iterate all the listed functions and 
@@ -90,7 +107,7 @@ database.connect(function(err)
                         quit();                
                     
                 }
-           
+            });
         
     };
     
